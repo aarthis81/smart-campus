@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Available Study Rooms</h1>
+<div class="grid">
+  {% for room in rooms %}
+  <div class="card">
+    <h2>{{ room.name }}</h2>
+    <p>Capacity: {{ room.capacity }} people</p>
+    <p class="muted">{{ room.today_count }} booking(s) today</p>
+    <a class="btn" href="{{ url_for('book', room_id=room.id) }}">Book this room</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

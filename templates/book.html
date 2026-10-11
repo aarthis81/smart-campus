@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Book a Room</h1>
+<form method="POST" class="form">
+  <label>Room</label>
+  <select name="room_id" required>
+    {% for room in rooms %}
+      <option value="{{ room.id }}" {% if selected == room.id|string %}selected{% endif %}>
+        {{ room.name }} (capacity {{ room.capacity }})
+      </option>
+    {% endfor %}
+  </select>
+
+  <label>Your name</label>
+  <input type="text" name="student_name" required>
+
+  <label>Date</label>
+  <input type="date" name="date" min="{{ today }}" value="{{ today }}" required>
+
+  <label>Start time</label>
+  <input type="time" name="start_time" required>
+
+  <label>End time</label>
+  <input type="time" name="end_time" required>
+
+  <button type="submit" class="btn">Confirm booking</button>
+</form>
+{% endblock %}

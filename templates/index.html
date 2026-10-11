@@ -1,14 +1,19 @@
-{% extends "base.html" %}
-{% block content %}
-<h1>Available Study Rooms</h1>
-<div class="grid">
-  {% for room in rooms %}
-  <div class="card">
-    <h2>{{ room.name }}</h2>
-    <p>Capacity: {{ room.capacity }} people</p>
-    <p class="muted">{{ room.today_count }} booking(s) today</p>
-    <a class="btn" href="{{ url_for('book', room_id=room.id) }}">Book this room</a>
-  </div>
-  {% endfor %}
-</div>
-{% endblock %}
+@app.route("/")
+def index():
+    today = date.today().isoformat()
+    min_cap = request.args.get("min_capacity", "").strip()
+
+    query = (
+        "SELECT r.*, "
+        "(SELECT COUNT(*) FROM bookings b WHERE b.room_id = r.id AND b.date = ?) "
+        "AS today_count FROM rooms r"
+    )
+    params = [today]
+
+    if min_cap.isdigit():                 # only filter if a valid number was typed
+        query += " WHERE r.capacity >= ?"
+        params.append(int(min_cap))
+
+    query += " ORDER BY r.capacity"
+    rooms = get_db().execute(query, params).fetchall()
+    return render_template("index.html", rooms=rooms, min_cap=min_cap)
